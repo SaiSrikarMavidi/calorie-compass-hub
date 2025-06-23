@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator } from "lucide-react";
+import { Calculator, AlertTriangle } from "lucide-react";
 import { IngredientSearch } from "@/components/CalorieCalculator/IngredientSearch";
 import { IngredientsList } from "@/components/CalorieCalculator/IngredientsList";
 import { CalorieSummary } from "@/components/CalorieCalculator/CalorieSummary";
@@ -78,6 +78,31 @@ const CalorieCalculator = () => {
           </p>
         </div>
 
+        {/* API Key Notice */}
+        <div className="mb-6">
+          <Card className="border-yellow-200 bg-yellow-50">
+            <CardContent className="pt-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-yellow-800 mb-1">USDA API Key Required</p>
+                  <p className="text-yellow-700">
+                    To use live food data, replace "DEMO_KEY" in IngredientSearch.tsx with your free USDA API key from{" "}
+                    <a 
+                      href="https://fdc.nal.usda.gov/api-guide.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="underline hover:no-underline"
+                    >
+                      https://fdc.nal.usda.gov/api-guide.html
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Add Ingredients */}
           <div className="lg:col-span-2 space-y-6">
@@ -123,6 +148,7 @@ const CalorieCalculator = () => {
                     <li>• Include cooking oils and seasonings</li>
                     <li>• Raw vs cooked weights can vary significantly</li>
                     <li>• Save frequent meals for quick access</li>
+                    <li>• Search works best with 2+ characters</li>
                   </ul>
                 </div>
               </CardContent>
