@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator } from "lucide-react";
+import { Calculator, AlertTriangle } from "lucide-react";
 import { IngredientSearch } from "@/components/CalorieCalculator/IngredientSearch";
 import { IngredientsList } from "@/components/CalorieCalculator/IngredientsList";
 import { CalorieSummary } from "@/components/CalorieCalculator/CalorieSummary";
