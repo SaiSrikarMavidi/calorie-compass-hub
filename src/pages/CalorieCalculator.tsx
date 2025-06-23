@@ -1,44 +1,134 @@
 
+import { useState } from "react";
 import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calculator } from "lucide-react";
+import { IngredientSearch } from "@/components/CalorieCalculator/IngredientSearch";
+import { IngredientsList } from "@/components/CalorieCalculator/IngredientsList";
+import { CalorieSummary } from "@/components/CalorieCalculator/CalorieSummary";
+import { useToast } from "@/hooks/use-toast";
+
+interface Ingredient {
+  id: number;
+  name: string;
+  quantity: number;
+  unit: string;
+  caloriesPer100g: number;
+  totalCalories: number;
+}
 
 const CalorieCalculator = () => {
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const { toast } = useToast();
+
+  const handleAddIngredient = (ingredient: Ingredient) => {
+    setIngredients(prev => [...prev, ingredient]);
+    toast({
+      title: "Ingredient Added",
+      description: `${ingredient.name} has been added to your meal.`,
+    });
+  };
+
+  const handleRemoveIngredient = (id: number) => {
+    setIngredients(prev => prev.filter(ingredient => ingredient.id !== id));
+    toast({
+      title: "Ingredient Removed",
+      description: "Ingredient has been removed from your meal.",
+    });
+  };
+
+  const handleSaveMeal = () => {
+    if (ingredients.length === 0) return;
+    
+    // In a real app, this would save to backend/localStorage
+    const meal = {
+      id: Date.now(),
+      name: `Meal ${new Date().toLocaleDateString()}`,
+      ingredients,
+      totalCalories: totalCalories,
+      createdAt: new Date().toISOString(),
+    };
+
+    // For demo, just save to localStorage
+    const savedMeals = JSON.parse(localStorage.getItem('savedMeals') || '[]');
+    savedMeals.push(meal);
+    localStorage.setItem('savedMeals', JSON.stringify(savedMeals));
+
+    toast({
+      title: "Meal Saved!",
+      description: `Your meal with ${totalCalories} calories has been saved.`,
+    });
+
+    // Clear the current meal
+    setIngredients([]);
+  };
+
+  const totalCalories = ingredients.reduce((sum, ingredient) => sum + ingredient.totalCalories, 0);
+
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Calculator className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold text-gray-900">Calorie Calculator</h1>
           </div>
           <p className="text-lg text-gray-600">
-            Calculate calories and nutrients for your meals
+            Add ingredients to calculate the total calories in your meal
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Calculator Coming Soon</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600 mb-6">
-              Our advanced calorie calculator will help you track the nutritional content of your meals with precision.
-            </p>
-            <div className="space-y-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-semibold mb-2">Features:</h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-600">
-                  <li>Comprehensive food database</li>
-                  <li>Macro and micronutrient tracking</li>
-                  <li>Portion size calculations</li>
-                  <li>Custom recipe analysis</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Add Ingredients */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Add Ingredients</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <IngredientSearch onAddIngredient={handleAddIngredient} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Meal</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <IngredientsList
+                  ingredients={ingredients}
+                  onRemoveIngredient={handleRemoveIngredient}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Summary */}
+          <div className="space-y-6">
+            <CalorieSummary
+              totalCalories={totalCalories}
+              ingredientCount={ingredients.length}
+              onSaveMeal={handleSaveMeal}
+            />
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tips</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-sm text-gray-600">
+                  <p className="font-medium mb-1">💡 Pro Tips:</p>
+                  <ul className="space-y-1 text-xs">
+                    <li>• Use a kitchen scale for accurate measurements</li>
+                    <li>• Include cooking oils and seasonings</li>
+                    <li>• Raw vs cooked weights can vary significantly</li>
+                    <li>• Save frequent meals for quick access</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </Layout>
   );
