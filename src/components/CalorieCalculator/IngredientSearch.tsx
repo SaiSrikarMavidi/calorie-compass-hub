@@ -7,7 +7,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 // USDA API configuration
-const USDA_API_KEY = "DEMO_KEY"; // Replace with actual API key
+const USDA_API_KEY = "BhT8P3xpq5W9ouInr2dgls7CRljufEaSEFKjSYI4";
 const USDA_BASE_URL = "https://api.nal.usda.gov/fdc/v1/foods/search";
 
 interface USDAFood {

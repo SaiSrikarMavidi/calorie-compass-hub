@@ -1,8 +1,7 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, AlertTriangle } from "lucide-react";
+import { Calculator } from "lucide-react";
 import { IngredientSearch } from "@/components/CalorieCalculator/IngredientSearch";
 import { IngredientsList } from "@/components/CalorieCalculator/IngredientsList";
 import { CalorieSummary } from "@/components/CalorieCalculator/CalorieSummary";
@@ -20,6 +19,24 @@ interface Ingredient {
 const CalorieCalculator = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const { toast } = useToast();
+
+  // Check for detected ingredients from upload page
+  useEffect(() => {
+    const detectedIngredientsData = sessionStorage.getItem('detectedIngredients');
+    if (detectedIngredientsData) {
+      try {
+        const detectedIngredients = JSON.parse(detectedIngredientsData);
+        setIngredients(detectedIngredients);
+        sessionStorage.removeItem('detectedIngredients'); // Clear after using
+        toast({
+          title: "Ingredients imported!",
+          description: `Added ${detectedIngredients.length} detected ingredients to your meal.`,
+        });
+      } catch (error) {
+        console.error('Error parsing detected ingredients:', error);
+      }
+    }
+  }, [toast]);
 
   const handleAddIngredient = (ingredient: Ingredient) => {
     setIngredients(prev => [...prev, ingredient]);
